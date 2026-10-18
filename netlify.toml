@@ -1,0 +1,18 @@
+# Netlify: sitio estático (Next.js export) que consume Supabase desde el navegador.
+[build]
+  base = "web"
+  command = "npm run build"
+  publish = "out"
+
+[build.environment]
+  NODE_VERSION = "22"
+  # Clave pública (publishable): está pensada para el navegador; la seguridad la dan RLS y las funciones api_*.
+  NEXT_PUBLIC_SUPABASE_URL = "https://uaakqejsfkqthjmybjzy.supabase.co"
+  NEXT_PUBLIC_SUPABASE_ANON_KEY = "sb_publishable_leODfAQyaV7780nXsPMJUw_Qoq_0aZl"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"

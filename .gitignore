@@ -1,0 +1,20 @@
+# Credenciales y datos locales (NUNCA subir)
+CREDENCIALES-*.txt
+*.env
+.env*
+api/config.local.php
+api/storage/
+
+# Dependencias y compilados
+node_modules/
+web/.next/
+web/out/
+web/next-env.d.ts
+*.tsbuildinfo
+
+# Editor / herramientas
+.claude/
+.vscode/
+.DS_Store
+Thumbs.db
+supabase/.temp/

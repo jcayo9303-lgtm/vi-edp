@@ -1,0 +1,10 @@
+RewriteEngine On
+RewriteBase /api/
+# Proteger código, configuración y almacenamiento
+RewriteRule ^(lib|database|storage)/ - [F,L]
+RewriteRule ^config(\.local)?\.php$ - [F,L]
+RewriteRule ^install\.php$ - [F,L]
+# Todo lo demás pasa por el enrutador
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^ index.php [QSA,L]
+CGIPassAuth On
