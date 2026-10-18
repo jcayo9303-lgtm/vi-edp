@@ -1,4 +1,4 @@
-# Control de Producción de Viñedo · Kerigma Agrícola
+# Control de Producción de Viñedo
 
 Sistema basado en `Propuesta_Control_Produccion_Vinedo.md`.
 

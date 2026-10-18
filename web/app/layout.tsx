@@ -8,7 +8,7 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono" });
 
 export const metadata: Metadata = {
-  title: "Control de Viñedo · Kerigma",
+  title: "Control de Viñedo",
   description: "Sistema de control y seguimiento de producción de la vid por parcela y planta",
 };
 

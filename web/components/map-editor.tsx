@@ -7,7 +7,8 @@ import "@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css";
 import type { Row } from "@/lib/api";
 import { num } from "@/lib/format";
 
-export const RAMP = ["#e9e9e6", "#cbcbc6", "#a3a39e", "#74746f", "#4a4a46", "#1f1f1d"];
+export const RAMP = ["#e4efe8", "#bfdacb", "#92c1a6", "#62a482", "#38805e", "#1d5c41"];
+const ESTADO = { carencia: "#B85A4A", validada: "#62a482", pendiente: "#ffffff" };
 
 export type Metric = "kg_ha" | "bs_kg" | "pct_fallas" | "margen_ha" | "estado";
 export const METRICS: Record<Metric, { label: string; unit: string; invert?: boolean }> = {
@@ -147,14 +148,14 @@ export default function MapEditor({ data, mode, plano, base, metric, selected, c
       const k = p.kpi ?? {};
       let fill: string, dash: string | undefined;
       if (metric === "estado") {
-        fill = k.carencia_vigente ? RAMP[5] : p.validada ? RAMP[2] : "#ffffff";
+        fill = k.carencia_vigente ? ESTADO.carencia : p.validada ? ESTADO.validada : ESTADO.pendiente;
         dash = p.validada ? undefined : "5 4";
       } else {
         fill = classify(vals, k[metric], METRICS[metric].invert);
       }
       const isSel = selected === p.id;
       const layer = L.geoJSON(geom, {
-        style: { color: isSel ? "#000" : "#2b2b2b", weight: isSel ? 3 : 1.4, fillColor: fill, fillOpacity: base === "satelite" && mode === "mapa" ? 0.55 : 0.85, dashArray: dash },
+        style: { color: isSel ? "#111" : "#1d3b2c", weight: isSel ? 3 : 1.4, fillColor: fill, fillOpacity: base === "satelite" && mode === "mapa" ? 0.55 : 0.85, dashArray: dash },
       });
       layer.bindTooltip(`${p.codigo}`, { permanent: true, direction: "center", className: "map-label" });
       layer.bindPopup(() => {

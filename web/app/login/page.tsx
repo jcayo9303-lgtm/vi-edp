@@ -38,7 +38,7 @@ export default function LoginPage() {
         </svg>
         <div className="row" style={{ gap: 10, position: "relative" }}>
           <div className="brand-mark" style={{ background: "#fafafa", color: "#111" }}><Grape size={16} /></div>
-          <b>Kerigma Agrícola</b>
+          <b>Control de Viñedo</b>
         </div>
         <div style={{ position: "relative" }}>
           <h1>Control de producción del viñedo, de la planta al kilo.</h1>

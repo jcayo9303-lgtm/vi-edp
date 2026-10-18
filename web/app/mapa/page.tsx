@@ -14,7 +14,7 @@ import type { Command, MapData, Metric } from "@/components/map-editor";
 
 const MapEditor = dynamic(() => import("@/components/map-editor"), { ssr: false, loading: () => <div style={{ display: "grid", placeItems: "center", height: "100%" }}><div className="spinner" /></div> });
 
-const RAMP = ["#e9e9e6", "#cbcbc6", "#a3a39e", "#74746f", "#4a4a46", "#1f1f1d"];
+const RAMP = ["#e4efe8", "#bfdacb", "#92c1a6", "#62a482", "#38805e", "#1d5c41"];
 const METRICS: Record<Metric, string> = { kg_ha: "Rendimiento kg/ha", margen_ha: "Margen Bs/ha", bs_kg: "Costo Bs/kg", pct_fallas: "% fallas", estado: "Validación / carencia" };
 const ELEMENTOS = [
   { tipo: "camino", label: "Camino", icon: Waypoints },
@@ -257,8 +257,8 @@ export default function MapaPage() {
             <b>{METRICS[metric]}</b>
             {metric === "estado" ? (
               <div className="stack" style={{ gap: 4, marginTop: 6 }}>
-                <span className="row"><span className="swatch" style={{ background: RAMP[5] }} /> Carencia vigente</span>
-                <span className="row"><span className="swatch" style={{ background: RAMP[2] }} /> Validada</span>
+                <span className="row"><span className="swatch" style={{ background: "#B85A4A" }} /> Carencia vigente</span>
+                <span className="row"><span className="swatch" style={{ background: RAMP[3] }} /> Validada</span>
                 <span className="row"><span className="swatch" style={{ background: "#fff", borderStyle: "dashed" }} /> Sin validar</span>
               </div>
             ) : (

@@ -29,7 +29,7 @@ export function Shell({ title, crumbs, actions, children, bare }: { title?: stri
       <aside className={`sidebar ${open ? "open" : ""}`}>
         <div className="brand">
           <div className="brand-mark"><Grape size={16} /></div>
-          <div><b>Control de Viñedo</b><span>Kerigma Agrícola · Tarija</span></div>
+          <div><b>Control de Viñedo</b><span>Producción de la vid · Tarija</span></div>
         </div>
         <nav>
           {NAV.map((g) => {

@@ -16,6 +16,8 @@
   --accent-ink: #ffffff;
   --hover: #f2f2f0;
   --focus: rgba(20, 20, 20, 0.16);
+  /* Paleta categórica sobria (orden fijo, validada para daltonismo con etiquetas directas) */
+  --c-1: #3A6FB5; --c-2: #C9773A; --c-3: #6A5BB8; --c-4: #249A72; --c-5: #A6466A; --c-6: #C69A2E; --c-7: #B85A4A; --c-8: #2F8CC4; --c-9: #7C8F3A;
   /* Rampa secuencial (magnitud): claro → oscuro */
   --seq-1: #e9e9e6; --seq-2: #cbcbc6; --seq-3: #a3a39e; --seq-4: #74746f; --seq-5: #4a4a46; --seq-6: #1f1f1d;
   --danger: #141414;
@@ -35,6 +37,8 @@
     --line: #2a2a29; --line-strong: #3a3a38; --ink: #f1f1ef; --ink-2: #cfcfcb; --ink-3: #9a9a95; --ink-4: #6e6e6a;
     --accent: #f1f1ef; --accent-ink: #111; --hover: #1f1f1e; --focus: rgba(255,255,255,.18);
     --seq-1: #262625; --seq-2: #3d3d3b; --seq-3: #5c5c59; --seq-4: #85857f; --seq-5: #b5b5af; --seq-6: #ebebe7;
+  --c-1: #4A7EC4; --c-2: #C9773A; --c-3: #7A6BC8; --c-4: #1E8A64; --c-5: #CC7096; --c-6: #AE8F22; --c-7: #C25550; --c-8: #3B93CB; --c-9: #7C8F3A;
+    --c-1: #4A7EC4; --c-2: #C9773A; --c-3: #7A6BC8; --c-4: #1E8A64; --c-5: #CC7096; --c-6: #AE8F22; --c-7: #C25550; --c-8: #3B93CB; --c-9: #7C8F3A;
     --shadow: 0 1px 2px rgba(0,0,0,.4); --shadow-lg: 0 10px 40px rgba(0,0,0,.6);
     color-scheme: dark;
   }
@@ -44,6 +48,7 @@
   --line: #2a2a29; --line-strong: #3a3a38; --ink: #f1f1ef; --ink-2: #cfcfcb; --ink-3: #9a9a95; --ink-4: #6e6e6a;
   --accent: #f1f1ef; --accent-ink: #111; --hover: #1f1f1e; --focus: rgba(255,255,255,.18);
   --seq-1: #262625; --seq-2: #3d3d3b; --seq-3: #5c5c59; --seq-4: #85857f; --seq-5: #b5b5af; --seq-6: #ebebe7;
+  --c-1: #4A7EC4; --c-2: #C9773A; --c-3: #7A6BC8; --c-4: #1E8A64; --c-5: #CC7096; --c-6: #AE8F22; --c-7: #C25550; --c-8: #3B93CB; --c-9: #7C8F3A;
   --shadow: 0 1px 2px rgba(0,0,0,.4); --shadow-lg: 0 10px 40px rgba(0,0,0,.6);
   color-scheme: dark;
 }
@@ -174,7 +179,7 @@ label.field > span i { color: var(--ink); font-style: normal; }
 .kpi .value small { font-size: 11px; font-weight: 500; color: var(--ink-3); margin-left: 3px; letter-spacing: 0; }
 .kpi .foot { font-size: 11px; color: var(--ink-3); display: flex; align-items: center; gap: 5px; }
 .meter { height: 4px; background: var(--surface-3); border-radius: 2px; overflow: hidden; }
-.meter > i { display: block; height: 100%; background: var(--ink); border-radius: 2px; }
+.meter > i { display: block; height: 100%; background: var(--bar, var(--c-1)); border-radius: 2px; }
 
 .badge {
   display: inline-flex; align-items: center; gap: 4px; height: 19px; padding: 0 7px; border-radius: 10px;
@@ -203,8 +208,8 @@ table.tbl { width: 100%; border-collapse: separate; border-spacing: 0; font-size
 .tbl tfoot td { font-weight: 600; border-top: 1px solid var(--line-strong); padding: 8px 10px; background: var(--surface-2); }
 .tbl .bar-cell { min-width: 110px; }
 .inline-bar { display: flex; align-items: center; gap: 8px; }
-.inline-bar i { height: 6px; background: var(--seq-5); border-radius: 0 3px 3px 0; display: block; min-width: 1px; }
-.inline-bar.neg i { background: var(--seq-3); }
+.inline-bar i { height: 6px; background: var(--c-4); border-radius: 0 3px 3px 0; display: block; min-width: 1px; }
+.inline-bar.neg i { background: var(--c-7); }
 .table-foot { display: flex; align-items: center; gap: 8px; padding: 9px 12px; border-top: 1px solid var(--line); color: var(--ink-3); font-size: 11.5px; }
 .empty { padding: 36px 16px; text-align: center; color: var(--ink-3); display: flex; flex-direction: column; align-items: center; gap: 8px; }
 .empty svg { color: var(--ink-4); }
@@ -256,8 +261,8 @@ table.tbl { width: 100%; border-collapse: separate; border-spacing: 0; font-size
 .chart svg { display: block; width: 100%; overflow: visible; }
 .chart .axis text { fill: var(--ink-3); font-size: 10px; }
 .chart .grid-line { stroke: var(--line); stroke-width: 1; }
-.chart .bar { fill: var(--seq-5); transition: fill .12s; }
-.chart .bar.hl, .chart .bar:hover { fill: var(--ink); }
+.chart .bar { fill: var(--bar, var(--c-1)); transition: filter .12s, opacity .12s; }
+.chart .bar.hl, .chart .bar:hover { filter: brightness(.82) saturate(1.1); }
 .chart .bar.ref { fill: none; stroke: var(--ink-3); stroke-dasharray: 3 2; }
 .tip {
   position: absolute; pointer-events: none; z-index: 5; background: var(--ink); color: var(--surface); padding: 6px 8px; border-radius: 4px;
@@ -265,9 +270,10 @@ table.tbl { width: 100%; border-collapse: separate; border-spacing: 0; font-size
 }
 .hbar { display: grid; grid-template-columns: 150px 1fr 70px 42px; align-items: center; gap: 10px; padding: 5px 0; font-size: 12px; cursor: default; }
 .hbar .track { position: relative; height: 10px; background: var(--surface-3); border-radius: 0 3px 3px 0; }
-.hbar .fill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--seq-5); border-radius: 0 3px 3px 0; }
+.hbar .fill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--bar, var(--c-1)); border-radius: 0 3px 3px 0; transition: filter .12s; }
+.hbar .key { width: 8px; height: 8px; border-radius: 2px; display: inline-block; margin-right: 6px; vertical-align: 0; }
 .hbar .tick { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--ink); }
-.hbar:hover .fill { background: var(--ink); }
+.hbar:hover .fill { filter: brightness(.82) saturate(1.1); }
 
 /* ---------------- Login ---------------- */
 .login { min-height: 100vh; display: grid; grid-template-columns: 1.1fr 1fr; }

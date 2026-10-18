@@ -1,5 +1,5 @@
 -- =====================================================================
---  Sistema de Control de Producción de Viñedo · Kerigma Agrícola
+--  Sistema de Control de Producción de Viñedo
 --  Base de datos local MySQL / MariaDB (XAMPP)
 --  Basado en: Propuesta_Control_Produccion_Vinedo.md (Parte B, sección 4)
 -- =====================================================================

@@ -15,14 +15,17 @@ interface Dash {
   alertas: { nivel: string; tipo: string; parcela_id: number | null; texto: string }[];
 }
 
+// Color fijo por categoría de gasto (sigue a la categoría, nunca al ranking)
+const catColor = (id: number) => `var(--c-${((Number(id) - 1) % 9) + 1})`;
+
 const MESES = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
 
-function Kpi({ icon: Icon, label, value, unit, foot, meter }: { icon: typeof Wallet; label: string; value: string; unit?: string; foot?: React.ReactNode; meter?: number }) {
+function Kpi({ icon: Icon, label, value, unit, foot, meter, color }: { icon: typeof Wallet; label: string; value: string; unit?: string; foot?: React.ReactNode; meter?: number; color?: string }) {
   return (
     <div className="card kpi">
       <div className="label"><Icon size={13} /> {label}</div>
       <div className="value">{value}{unit && <small>{unit}</small>}</div>
-      {meter !== undefined && <div className="meter" aria-hidden><i style={{ width: `${Math.min(100, meter)}%` }} /></div>}
+      {meter !== undefined && <div className="meter" aria-hidden><i style={{ width: `${Math.min(100, meter)}%`, ["--bar" as string]: color ?? "var(--c-1)" }} /></div>}
       {foot && <div className="foot">{foot}</div>}
     </div>
   );
@@ -63,14 +66,14 @@ export default function Dashboard() {
     >
       <div className="stack" style={{ gap: 14 }}>
         <div className="grid g-4">
-          <Kpi icon={Wallet} label="Gasto de la campaña" value={compact(t.gasto)} unit="Bs" meter={t.pct_presupuesto ?? 0}
+          <Kpi icon={Wallet} label="Gasto de la campaña" value={compact(t.gasto)} unit="Bs" meter={t.pct_presupuesto ?? 0} color={(t.pct_presupuesto ?? 0) > 100 ? "var(--c-7)" : "var(--c-1)"}
             foot={t.presupuesto ? <>{pct(t.pct_presupuesto)} del presupuesto ({compact(t.presupuesto)} Bs){t.pct_presupuesto > 100 && <AlertTriangle size={12} />}</> : "Sin presupuesto"} />
           <Kpi icon={Grape} label="Producción neta" value={compact(t.kg)} unit="kg" foot={<>{num(t.kg_ha)} kg/ha · {num(t.kg_planta)} kg/planta</>} />
           <Kpi icon={Scale} label="Costo por kg" value={num(t.bs_kg, 2)} unit="Bs/kg" foot="Referencia: 1,1 – 2,0 Bs/kg en plena producción" />
           <Kpi icon={TrendingUp} label="Margen estimado" value={compact(t.margen)} unit="Bs" foot={<>Ingreso {compact(t.ingreso)} Bs · {t.gasto ? pct((t.margen / t.gasto) * 100) : "–"} rentab.</>} />
           <Kpi icon={Ruler} label="Gasto por hectárea" value={num(t.bs_ha)} unit="Bs/ha" foot="Ref. mantenimiento: 19.845 Bs/ha/año" />
           <Kpi icon={Sprout} label="Gasto por planta" value={num(t.bs_planta, 2)} unit="Bs/pl" foot={<>{num(t.plantas)} plantas vivas (censo)</>} />
-          <Kpi icon={CircleCheck} label="Parcelas validadas" value={`${t.validadas}/${t.parcelas}`} meter={(t.validadas / Math.max(1, t.parcelas)) * 100} foot="Sin validación no se liquida" />
+          <Kpi icon={CircleCheck} label="Parcelas validadas" value={`${t.validadas}/${t.parcelas}`} meter={(t.validadas / Math.max(1, t.parcelas)) * 100} color="var(--c-4)" foot="Sin validación no se liquida" />
           <Kpi icon={ShieldAlert} label="Alertas activas" value={String(d.alertas.length)} foot={<>{d.alertas.filter((a) => a.nivel === "alta").length} de prioridad alta</>} />
         </div>
 
@@ -79,14 +82,14 @@ export default function Dashboard() {
             <div className="card-head"><Coins size={14} /><h2>¿En qué gasté?</h2><span className="sub">por categoría · la marca indica el presupuesto</span></div>
             <div className="card-body">
               {d.categorias.length ? (
-                <HBars format={(n) => compact(n)} data={d.categorias.map((c) => ({ label: c.categoria, value: c.monto, ref: c.presupuesto || undefined, right: `${compact(c.monto)}`, extra: `${num(c.pct, 0)} %` }))} />
+                <HBars format={(n) => compact(n)} data={d.categorias.map((c) => ({ label: c.categoria, value: c.monto, ref: c.presupuesto || undefined, right: `${compact(c.monto)}`, extra: `${num(c.pct, 0)} %`, color: catColor(c.id) }))} />
               ) : <div className="empty">Sin gastos registrados</div>}
               <div className="table-wrap" style={{ marginTop: 12 }}>
                 <table className="tbl">
                   <thead><tr><th>Categoría</th><th className="num">Bs</th><th className="num">%</th><th className="num">Bs/ha</th><th className="num">Bs/planta</th><th className="num">Bs/kg</th></tr></thead>
                   <tbody>
                     {d.categorias.map((c) => (
-                      <tr key={c.categoria}><td>{c.categoria}</td><td className="num">{num(c.monto)}</td><td className="num">{num(c.pct, 1)}</td><td className="num">{num(c.bs_ha)}</td><td className="num">{num(c.bs_planta, 2)}</td><td className="num">{num(c.bs_kg, 2)}</td></tr>
+                      <tr key={c.categoria}><td><i className="swatch" style={{ display: "inline-block", width: 9, height: 9, marginRight: 7, background: catColor(c.id), border: 0, verticalAlign: 0 }} />{c.categoria}</td><td className="num">{num(c.monto)}</td><td className="num">{num(c.pct, 1)}</td><td className="num">{num(c.bs_ha)}</td><td className="num">{num(c.bs_planta, 2)}</td><td className="num">{num(c.bs_kg, 2)}</td></tr>
                     ))}
                   </tbody>
                   <tfoot><tr><td>Total</td><td className="num">{num(t.gasto)}</td><td className="num">100</td><td className="num">{num(t.bs_ha)}</td><td className="num">{num(t.bs_planta, 2)}</td><td className="num">{num(t.bs_kg, 2)}</td></tr></tfoot>
@@ -115,14 +118,14 @@ export default function Dashboard() {
           <div className="card">
             <div className="card-head"><Banknote size={14} /><h2>Gasto por mes</h2><span className="sub">Bs</span></div>
             <div className="card-body">
-              <Columns data={d.meses.map((m) => ({ label: `${MESES[Number(m.mes.slice(5)) - 1]} ${m.mes.slice(2, 4)}`, value: Number(m.monto), tip: bs(m.monto) }))} />
+              <Columns color="var(--c-1)" data={d.meses.map((m) => ({ label: `${MESES[Number(m.mes.slice(5)) - 1]} ${m.mes.slice(2, 4)}`, value: Number(m.monto), tip: bs(m.monto) }))} />
             </div>
           </div>
           <div className="card">
             <div className="card-head"><Grape size={14} /><h2>Cosecha por día</h2><span className="sub">kg netos de báscula</span></div>
             <div className="card-body">
               {d.cosecha_dia.length ? (
-                <Columns data={d.cosecha_dia.map((c) => ({ label: `${c.fecha.slice(8)}/${c.fecha.slice(5, 7)}`, value: Number(c.kg), tip: `${num(c.kg)} kg · ${c.viajes} viaje(s) · ${num(c.kg_balde)} kg/balde` }))} />
+                <Columns color="var(--c-5)" data={d.cosecha_dia.map((c) => ({ label: `${c.fecha.slice(8)}/${c.fecha.slice(5, 7)}`, value: Number(c.kg), tip: `${num(c.kg)} kg · ${c.viajes} viaje(s) · ${num(c.kg_balde)} kg/balde` }))} />
               ) : <div className="empty"><Grape size={18} />Aún no hay cosecha en esta campaña</div>}
             </div>
           </div>

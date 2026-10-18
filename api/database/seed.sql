@@ -12,7 +12,7 @@ INSERT INTO modalidades (nombre, descripcion, tipo_liquidacion, porcentaje_repar
 ('Propia','Parcela propia de la empresa','precio_kg',NULL);
 
 INSERT INTO propietarios (nombre, nit_ci, telefono, modalidad_id) VALUES
-('Kerigma Agrícola','1023456021','72900000',4),
+('Viñedo Propio','1023456021','72900000',4),
 ('Familia Vaca Guzmán','4123321','71811111',2),
 ('Casa Boutique Valle Alto','3029911019','72222333',1),
 ('Juan Ríos Mendoza','5567123','73344555',3);

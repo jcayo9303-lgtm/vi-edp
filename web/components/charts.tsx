@@ -3,8 +3,8 @@ import { useState } from "react";
 import { compact, num } from "@/lib/format";
 
 /** Barras verticales de una sola serie (gris), con tooltip al pasar el cursor. */
-export function Columns({ data, height = 170, unit = "", format = compact }: {
-  data: { label: string; value: number; tip?: string }[]; height?: number; unit?: string; format?: (n: number) => string;
+export function Columns({ data, height = 170, unit = "", format = compact, color = "var(--c-1)" }: {
+  data: { label: string; value: number; tip?: string }[]; height?: number; unit?: string; format?: (n: number) => string; color?: string;
 }) {
   const [hover, setHover] = useState<number | null>(null);
   if (!data.length) return <div className="empty">Sin datos</div>;
@@ -15,7 +15,7 @@ export function Columns({ data, height = 170, unit = "", format = compact }: {
   const y = (v: number) => pt + (H - pb - pt) * (1 - v / nice);
   const ticks = [0, 0.25, 0.5, 0.75, 1].map((t) => t * nice);
   return (
-    <div className="chart">
+    <div className="chart" style={{ ["--bar" as string]: color }}>
       <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label="Gráfico de columnas">
         <g className="axis">
           {ticks.map((t) => (
@@ -63,14 +63,14 @@ function niceMax(v: number) {
 
 /** Barras horizontales con marca de referencia (presupuesto). */
 export function HBars({ data, format = (n: number) => num(n) }: {
-  data: { label: string; value: number; ref?: number; right?: string; extra?: string }[]; format?: (n: number) => string;
+  data: { label: string; value: number; ref?: number; right?: string; extra?: string; color?: string }[]; format?: (n: number) => string;
 }) {
   const max = Math.max(...data.map((d) => Math.max(d.value, d.ref ?? 0)), 1);
   return (
     <div>
       {data.map((d) => (
-        <div key={d.label} className="hbar" title={`${d.label}: ${format(d.value)}${d.ref ? ` · presupuesto ${format(d.ref)}` : ""}`}>
-          <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{d.label}</span>
+        <div key={d.label} className="hbar" style={{ ["--bar" as string]: d.color ?? "var(--c-1)" }} title={`${d.label}: ${format(d.value)}${d.ref ? ` · presupuesto ${format(d.ref)}` : ""}`}>
+          <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}><i className="key" style={{ background: d.color ?? "var(--c-1)" }} />{d.label}</span>
           <div className="track">
             <div className="fill" style={{ width: `${(d.value / max) * 100}%` }} />
             {d.ref ? <div className="tick" style={{ left: `${(d.ref / max) * 100}%` }} /> : null}
@@ -95,16 +95,16 @@ export function CurveChart({ points }: { points: { x: number; real: number | nul
   const Y = (v: number) => pt + (H - pb - pt) * (1 - v / maxY);
   const line = (k: "real" | "esperado") => points.filter((p) => p[k] !== null).map((p, i) => `${i ? "L" : "M"}${X(p.x)},${Y(p[k]!)}`).join(" ");
   return (
-    <div className="chart">
+    <div className="chart" style={{ maxWidth: 820 }}>
       <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label="Rendimiento por edad: real contra esperado">
         <g className="axis">
           {[0, 0.5, 1].map((t) => (<g key={t}><line className="grid-line" x1={pl} x2={W - pr} y1={Y(t * maxY)} y2={Y(t * maxY)} /><text x={pl - 6} y={Y(t * maxY) + 3} textAnchor="end">{num(t * maxY, 1)}</text></g>))}
           {points.map((p) => <text key={p.x} x={X(p.x)} y={H - 6} textAnchor="middle">{p.x}</text>)}
         </g>
         <path d={line("esperado")} fill="none" stroke="var(--ink-3)" strokeWidth="2" strokeDasharray="5 4" />
-        <path d={line("real")} fill="none" stroke="var(--ink)" strokeWidth="2" />
+        <path d={line("real")} fill="none" stroke="var(--c-5)" strokeWidth="2" />
         {points.map((p, i) => p.real !== null && (
-          <circle key={i} cx={X(p.x)} cy={Y(p.real)} r={hover === i ? 6 : 4.5} fill="var(--ink)" stroke="var(--surface)" strokeWidth="2" />
+          <circle key={i} cx={X(p.x)} cy={Y(p.real)} r={hover === i ? 6 : 4.5} fill="var(--c-5)" stroke="var(--surface)" strokeWidth="2" />
         ))}
         {points.map((p, i) => (
           <rect key={`h${i}`} x={X(p.x) - 14} y={pt} width={28} height={H - pb - pt} fill="transparent" onMouseEnter={() => setHover(i)} onMouseLeave={() => setHover(null)} />
@@ -117,7 +117,7 @@ export function CurveChart({ points }: { points: { x: number; real: number | nul
         </div>
       )}
       <div className="row small muted" style={{ gap: 14, marginTop: 4 }}>
-        <span className="row" style={{ gap: 5 }}><svg width="18" height="4"><line x1="0" x2="18" y1="2" y2="2" stroke="var(--ink)" strokeWidth="2" /></svg>Real</span>
+        <span className="row" style={{ gap: 5 }}><svg width="18" height="4"><line x1="0" x2="18" y1="2" y2="2" stroke="var(--c-5)" strokeWidth="2" /></svg>Real</span>
         <span className="row" style={{ gap: 5 }}><svg width="18" height="4"><line x1="0" x2="18" y1="2" y2="2" stroke="var(--ink-3)" strokeWidth="2" strokeDasharray="4 3" /></svg>Curva esperada (Cuadro 17)</span>
       </div>
     </div>

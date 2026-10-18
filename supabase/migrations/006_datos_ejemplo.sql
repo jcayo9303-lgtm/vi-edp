@@ -30,7 +30,7 @@ insert into public.modalidades (id,nombre,descripcion,tipo_liquidacion,porcentaj
 (4,'Propia','Parcela propia de la empresa','precio_kg',null,'2026-10-15 23:55:52-04',null,'2026-10-15 23:55:52-04');
 select setval(pg_get_serial_sequence('public.modalidades','id'), coalesce((select max(id) from public.modalidades), 1));
 insert into public.propietarios (id,nombre,nit_ci,telefono,modalidad_id,created_at,created_by,updated_at) overriding system value values
-(1,'Kerigma Agrícola','1023456021','72900000',4,'2026-10-15 23:55:52-04',null,'2026-10-15 23:55:52-04'),
+(1,'Viñedo Propio','1023456021','72900000',4,'2026-10-15 23:55:52-04',null,'2026-10-15 23:55:52-04'),
 (2,'Familia Vaca Guzmán','4123321','71811111',2,'2026-10-15 23:55:52-04',null,'2026-10-15 23:55:52-04'),
 (3,'Casa Boutique Valle Alto','3029911019','72222333',1,'2026-10-15 23:55:52-04',null,'2026-10-15 23:55:52-04'),
 (4,'Juan Ríos Mendoza','5567123','73344555',3,'2026-10-15 23:55:52-04',null,'2026-10-15 23:55:52-04');
