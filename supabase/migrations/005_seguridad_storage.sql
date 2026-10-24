@@ -3,10 +3,16 @@
 -- Lectura: cualquier usuario activo. Escritura: SOLO a través de las
 -- funciones public.api_* (que validan rol, reglas y registran la bitácora).
 -- =====================================================================
+-- Acceso al esquema (Supabase lo trae por defecto, pero se pierde si otra app recrea "public")
+grant usage on schema public to anon, authenticated, service_role;
+
 do $$
 declare t text;
 begin
-  for t in select c.relname from pg_class c join pg_namespace n on n.oid = c.relnamespace where n.nspname = 'public' and c.relkind = 'r' loop
+  -- Solo las tablas del viñedo: si otra app comparte el proyecto, sus tablas no se tocan
+  for t in select c.relname from pg_class c join pg_namespace n on n.oid = c.relnamespace
+           where n.nspname = 'public' and c.relkind = 'r'
+             and (c.relname in (select nombre from app.recursos) or c.relname in ('bitacora','archivos','respaldos','perfiles')) loop
     execute format('alter table public.%I enable row level security', t);
     execute format('drop policy if exists lectura on public.%I', t);
     if t = 'respaldos' then
@@ -16,13 +22,17 @@ begin
     end if;
     execute format('revoke insert, update, delete, truncate on public.%I from anon, authenticated', t);
     execute format('revoke all on public.%I from anon', t);
+    execute format('grant select on public.%I to authenticated', t);
+    execute format('grant all on public.%I to service_role', t);
+  end loop;
+  -- Vistas de control (respetan RLS: security_invoker)
+  for t in select c.relname from pg_class c where c.relnamespace = 'public'::regnamespace and c.relkind = 'v' and c.relname like 'v\_%' loop
+    execute format('grant select on public.%I to authenticated', t);
   end loop;
 end $$;
 
-revoke all on all sequences in schema public from anon;
 
 -- Funciones: nada para anónimos; solo api_* para usuarios autenticados
-revoke execute on all functions in schema public from public, anon;
 revoke execute on all functions in schema app from public, anon;
 grant execute on function app.rol_actual() to authenticated;
 do $$
@@ -30,10 +40,10 @@ declare f record;
 begin
   for f in select p.oid::regprocedure as sig from pg_proc p join pg_namespace n on n.oid = p.pronamespace
            where n.nspname = 'public' and p.proname like 'api\_%' loop
+    execute format('revoke execute on function %s from public, anon', f.sig);
     execute format('grant execute on function %s to authenticated', f.sig);
   end loop;
 end $$;
-alter default privileges in schema public revoke execute on functions from public, anon;
 
 -- ---------------------------------------------------------------------
 -- Storage
